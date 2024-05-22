@@ -62,7 +62,7 @@ class EmployeeMedicalDetails(models.Model):
     )
     blood_type = fields.Selection([("+", "+"), ("-", "-")], "Blood Type")
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.employee" and self._context.get(
             "active_id"
@@ -89,7 +89,7 @@ class EmployeePreviousOccupation(models.Model):
     employee_id = fields.Many2one("hr.employee", "Employee Ref", ondelete="cascade")
     email = fields.Char("Email")
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.employee" and self._context.get(
             "active_id"

@@ -58,7 +58,7 @@ class ApplicantRelative(models.Model):
             }
             return {"gender": False, "warning": warning}
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.applicant" and self._context.get(
             "active_id"
@@ -107,28 +107,13 @@ class ApplicantEducation(models.Model):
                 rec.school_name
             ) = rec.grade = rec.field = rec.edu_type = rec.province = ""
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.applicant" and self._context.get(
             "active_id"
         ):
             vals.update({"applicant_id": self._context.get("active_id")})
         return super(ApplicantEducation, self).create(vals)
-
-    # @api.onchange("from_date", "to_date")
-    # def _onchange_date(self):
-    #     '''Give user alert for from date and to date'''
-    #     warning = {
-    #         "title": _("User Alert !"),
-    #     }
-    #     message = False
-    #     if self.to_date and self.to_date >= fields.Date.today():
-    #         message = _("To date must be less than today!")
-    #     elif self.from_date and self.to_date and self.from_date > self.to_date:
-    #         message = _("To Date must be greater than From Date!")
-    #     if message:
-    #         warning.update({"message": message})
-    #         return {"warning": warning}
 
     @api.constrains('from_date', 'to_date')
     def check_date(self):

@@ -164,13 +164,13 @@ class TrainingClass(models.Model):
                                 "Training Completed or Training incomplete!"
                             )
                         )
-        rec.state = "completed"
+        self.state = "completed"
 
     def action_cancel(self):
         for rec in self:
             if any(attendee.state not in ["draft", "awaiting_training_start", "in_complete"] for attendee in rec.attendees_ids):
                 raise ValidationError(_("You cannot cancel the Training Class if all attendees are not in Draft, Awaiting Training Start, or Incomplete state!"))
-        rec.state = "cancel"
+        self.state = "cancel"
 
 
 class ListOfAttendees(models.Model):

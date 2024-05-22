@@ -27,10 +27,10 @@ class EmployeeRelative(models.Model):
         string="Relative Type",
         required=True,
     )
-    name = fields.Char(string="Name", size=128, required=True)
+    name = fields.Char(string="Name", required=True)
     birthday = fields.Date(string="Date of Birth")
-    place_of_birth = fields.Char(string="Place of Birth", size=128)
-    occupation = fields.Char(string="Occupation", size=128)
+    place_of_birth = fields.Char(string="Place of Birth")
+    occupation = fields.Char(string="Occupation")
     gender = fields.Selection(
         [("Male", "Male"), ("Female", "Female")], string="Gender", required=False
     )
@@ -62,10 +62,10 @@ class EmployeeRelative(models.Model):
             }
             return {"gender": False, "warning": warning}
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.employee" and self._context.get(
-            "active_id"
+                "active_id"
         ):
             vals.update({"employee_id": self._context.get("active_id")})
         return super(EmployeeRelative, self).create(vals)
@@ -81,9 +81,9 @@ class EmployeeEducation(models.Model):
     from_date = fields.Date(string="From Date")
     to_date = fields.Date(string="To Date")
     education_rank = fields.Char("Education Rank")
-    school_name = fields.Char(string="School Name", size=256)
+    school_name = fields.Char(string="School Name")
     grade = fields.Char("Education Field/Major")
-    field = fields.Char(string="Major/Field of Education", size=128)
+    field = fields.Char(string="Major/Field of Education")
     illiterate = fields.Boolean("Illiterate")
     active = fields.Boolean(string="Active", default=True)
     employee_id = fields.Many2one("hr.employee", "Employee Ref", ondelete="cascade")
@@ -96,12 +96,10 @@ class EmployeeEducation(models.Model):
 
     @api.onchange("edu_type")
     def _onchange_edu_type(self):
-
-        for rec in self:
-            if rec.edu_type == "Local":
-                rec.country_id = False
-            else:
-                rec.province = rec.state_id = False
+        if self.edu_type == "Local":
+            self.country_id = False
+        else:
+            self.province = self.state_id = False
 
     @api.onchange("illiterate")
     def _onchange_illiterate(self):
@@ -109,10 +107,10 @@ class EmployeeEducation(models.Model):
             rec.from_date = rec.to_date = rec.country_id = rec.state_id = False
             rec.education_rank = rec.school_name = rec.grade = rec.field = rec.edu_type = rec.province = ""
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.employee" and self._context.get(
-            "active_id"
+                "active_id"
         ):
             vals.update({"employee_id": self._context.get("active_id")})
         return super(EmployeeEducation, self).create(vals)
@@ -130,4 +128,3 @@ class EmployeeEducation(models.Model):
         if message:
             warning.update({"message": message})
             return {"warning": warning}
-

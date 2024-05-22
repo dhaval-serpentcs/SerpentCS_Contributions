@@ -63,7 +63,7 @@ class ApplicantMedicalDetails(models.Model):
     )
     blood_type = fields.Selection([("+", "+"), ("-", "-")], "Blood Type")
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.applicant" and self._context.get(
             "active_id"
@@ -89,7 +89,7 @@ class ApplicantPreviousOccupation(models.Model):
     applicant_id = fields.Many2one("hr.applicant", "Applicant Ref", ondelete="cascade")
     email = fields.Char("Email")
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.applicant" and self._context.get(
             "active_id"

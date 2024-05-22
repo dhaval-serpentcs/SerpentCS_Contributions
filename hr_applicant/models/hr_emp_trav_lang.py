@@ -13,12 +13,12 @@ class EmployeePreviousTravel(models.Model):
 
     from_date = fields.Date(string="From Date", required=True)
     to_date = fields.Date(string="To Date", required=True)
-    location = fields.Char(string="Location", size=128, required=True)
+    location = fields.Char(string="Location", required=True)
     reason = fields.Char("Reason", required=True)
     active = fields.Boolean(string="Active", default=True)
     employee_id = fields.Many2one("hr.employee", "Employee Ref", ondelete="cascade")
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.employee" and self._context.get(
             "active_id"
@@ -82,7 +82,7 @@ class EmployeeLanguage(models.Model):
                     % (self.language, language_rec.language)
                 )
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals):
         if self._context.get("active_model") == "hr.employee" and self._context.get(
             "active_id"
